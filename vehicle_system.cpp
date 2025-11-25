@@ -1,158 +1,162 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <set>
-#include <unordered_map>
-#include <algorithm>
-#include <iomanip>
+
+#include<iostream>
+#include<algorithm>
+#include<map>
+#include<vector>
+#include<set>
+#include<unordered_map>
 using namespace std;
 
-// Vehicle Structure
-struct Vehicle {
+struct Vehicle
+{
     string regNo;
-    string ownerName;
-    string type;
-    string company;
-    int modelYear;
+    string owner;
+    string vehicle_type;
+    string vehicle_company;
+    int year;
 };
 
-// Global STL Containers
-vector<Vehicle> vehicles;                // maintains order 
-map<string, Vehicle> vehicleMap;         // key = regNo,vehicle
-set<string> vehicleTypes;                // sorted unique types
-unordered_map<string, int> companyCount; // count by company
+vector<Vehicle> vehicles; // for vehicles
+map<string, Vehicle> mapVehicle;//for vehicles with regNo.
+set<string> vehicleTypes;// for vehicle model
+unordered_map<string,int> companyCount;//counting vehicle by company.
 
-// 1. Register Vehicle
-void registerVehicle() {
+void vehicleRegistration()
+{
     Vehicle v;
-
-    cout << "Enter Registration Number: ";
-    cin >> v.regNo;
-
-    if (vehicleMap.find(v.regNo) != vehicleMap.end()) {
+    cout<<"Enter Registration Number:\n";
+    cin>>v.regNo;
+    
+    if(mapVehicle.find(v.regNo)!=mapVehicle.end())
+    {
         cout << "Error: Registration number already exists!\n";
         return;
     }
+    cout<<"Enter owner name\n";
+    cin>>v.owner;
 
-    cin.ignore();
-    cout << "Enter Owner Name: ";
-    getline(cin, v.ownerName);
+    cout<<"Enter Vehicle Type (Car/Bike/Truck):\n";
+    cin>>v.vehicle_type;
 
-    cout << "Enter Vehicle Type (Car/Bike/Truck): ";
-    cin >> v.type;
+    cout<<"Enter Company:\n";
+    cin>>v.vehicle_company;
 
-    cout << "Enter Company: ";
-    cin >> v.company;
+    cout<<"Enter Model Year:\n";
+    cin>>v.year;
 
-    cout << "Enter Model Year: ";
-    cin >> v.modelYear;
-
-    // Insert into all containers
     vehicles.push_back(v);
-    vehicleMap[v.regNo] = v;
-    vehicleTypes.insert(v.type);
-    companyCount[v.company]++;
+    mapVehicle[v.regNo] = v;
+    vehicleTypes.insert(v.vehicle_type);
+    companyCount[v.vehicle_company]++;
 
-    cout << "Vehicle registered successfully!\n";
+    cout<<"Vehicle registered successfully!\n";
+
+
 }
-// 2. Search by Registration Number
-void searchByRegNo() {
+void searchByRegNo()
+{
     string reg;
-    cout << "Enter Registration Number to search: ";
-    cin >> reg;
+    cout<<"Enter Registration Number to search:\n";
+    cin>>reg;
 
-    auto it = vehicleMap.find(reg);
-    if (it == vehicleMap.end()) {
+    auto it = mapVehicle.find(reg);
+    //if not found
+    if (it == mapVehicle.end()) {
         cout << "Vehicle not found.\n";
         return;
     }
 
+    //if found
     Vehicle v = it->second;
-    cout << "Vehicle Found:\n";
-    cout << "RegNo       : " << v.regNo << endl;
-    cout << "Owner Name  : " << v.ownerName << endl;
-    cout << "Type        : " << v.type << endl;
-    cout << "Company     : " << v.company << endl;
-    cout << "Model Year  : " << v.modelYear << endl;
-}
+    cout<<"Vehicle Found:\n"; 
+    cout<<"RegNo       : "<<v.regNo<<"\n"; 
+    cout<<" Owner Name  : "<<v.owner<<"\n";
+    cout<<"Type        :"<<v.vehicle_type<<"\n";
+    cout<<"Company     :"<<v.vehicle_company<<"\n";
+    cout<<"Model Year  :"<<v.year<<"\n";
+    
 
-// 3. Search by Owner Name
-void searchByOwner() {
+}
+void searchByOwner()
+{
     cin.ignore();
     string name;
-    cout << "Enter Owner Name to search: ";
+    cout<<"Enter Owner Name to search:\n";
     getline(cin, name);
-
+    
     vector<Vehicle> results;
-
-    // partial match using lambda
     for (auto &v : vehicles) {
-        if (v.ownerName.find(name) != string::npos) {
+        if (v.owner.find(name) != string::npos) {
             results.push_back(v);
         }
     }
 
+    //If Not found
     if (results.empty()) {
         cout << "No vehicles found for this owner.\n";
         return;
     }
-
-    cout << "Vehicles registered under \"" << name << "\":\n";
-    cout << "-----------------------------------------\n";
+    //If found
+    cout<<"Vehicles registered under \""<<name<<"\"\n";
     for (auto &v : results) {
-        cout << "RegNo       : " << v.regNo << endl;
-        cout << "Type        : " << v.type << endl;
-        cout << "Company     : " << v.company << endl;
-        cout << "Model Year  : " << v.modelYear << endl;
-        cout << "-----------------------------------------\n";
+        cout<<"RegNo       :\n";
+        cout<<"Type        :"<<v.vehicle_type<<"\n";
+        cout<<"Company     :"<<v.vehicle_company<<"\n";
+        cout<<"Model Year  :"<<v.year<<"\n";
     }
-}
-// 4. Update Owner Name
-void updateOwner() {
-    string reg;
-    cout << "Enter Registration Number to update: ";
-    cin >> reg;
 
-    auto it = vehicleMap.find(reg);
-    if (it == vehicleMap.end()) {
-        cout << "Registration number not found.\n";
+}
+void updateOwner()
+{
+    string reg;
+    cout<<"Enter Registration Number to update:\n";
+    cin>>regNo;
+
+    auto it = mapVehicle.find(reg);
+    if(it==mapVehicle.end())
+    {
+        cout<<"Vehicle not found.\n";
         return;
     }
-
-    cin.ignore();
     string newOwner;
-    cout << "Enter new Owner Name: ";
+    cin.ignore();
+    cout<<"Enter new Owner Name: ";
     getline(cin, newOwner);
+    //update map
+    it->second.owner = newOwner;
 
-    // Update map
-    it->second.ownerName = newOwner;
-
-    // Update vector
-    for (auto &v : vehicles) {
-        if (v.regNo == reg) {
-            v.ownerName = newOwner;
+    //update vector
+    for(auto &v : vehicles)
+    {
+        if(v.regNo==reg)
+        {
+            v.owner=newOwner;
+            break;
         }
     }
 
-    cout << "Owner updated successfully!\n";
-}
-// 5. Delete Vehicle
-void deleteVehicle() {
-    string reg;
-    cout << "Enter Registration Number to delete: ";
-    cin >> reg;
+    cout<<"Owner updated successfully!";
 
-    auto it = vehicleMap.find(reg);
-    if (it == vehicleMap.end()) {
+}
+void deleteVehicle()
+{
+    string reg;
+    cout<<"Enter Registration Number to delete:\n";
+    cin>>regNo;
+
+    auto it = mapVehicle.find(reg);
+    //if not found.
+    if (it == mapVehicle.end()) {
         cout << "Registration number not found. Cannot delete.\n";
         return;
     }
+    //if found.
 
-    string comp = it->second.company;
-    string type = it->second.type;
+    string comp = it->second.vehicle_company;
+    string type = it->second.vehicle_type;
 
     // Remove from map
-    vehicleMap.erase(reg);
+    mapVehicle.erase(reg);
 
     // Remove from vector
     vehicles.erase(
@@ -168,118 +172,128 @@ void deleteVehicle() {
     // Check if type still exists
     bool typeExists = false;
     for (auto &v : vehicles) {
-        if (v.type == type) {
+        if (v.vehicle_type == type) {
             typeExists = true;
             break;
         }
     }
     if (!typeExists) vehicleTypes.erase(type);
+    cout<<"Vehicle deleted successfully!";
 
-    cout << "Vehicle deleted successfully!\n";
+
 }
-
-//--------------------------------------
-// 6. List All Vehicles (sorted by model year)
-//--------------------------------------
-void listAllVehicles() {
-    if (vehicles.empty()) {
-        cout << "No vehicles to list.\n";
-        return;
+void showVehicles()
+{
+    if(vehicles.empty())
+    {
+        cout<<"No vehicle present to show.\n";
+        return ;
     }
 
     vector<Vehicle> sortedVehicles = vehicles;
-
     sort(sortedVehicles.begin(), sortedVehicles.end(),
-         [](const Vehicle &a, const Vehicle &b) {
-             return a.modelYear < b.modelYear;
-         });
+    [](const Vehicle &a, const Vehicle &b)
+    {
+        return a.year<b.year;
+    });
 
-    cout << "All Registered Vehicles (Sorted by Model Year)\n";
-    cout << "---------------------------------------------------------\n";
-    cout << left << setw(12) << "RegNo" << setw(15) << "Owner"
-         << setw(10) << "Type" << setw(12) << "Company"
-         << setw(6) << "Year" << endl;
-    cout << "---------------------------------------------------------\n";
+    cout<<"------All Registered Vehicles (Sorted by Model Year)-------\n";
+    cout<<"------RegNo"<<"        Owner"<<"        type"<<"        Company"<<"        Year\n";
+    cout<<"------";
+    for( auto &v: sortedVehicles)
+    {
+        cout<<v.regNo<<"        ";
+        cout<<v.owner<<"        ";
+        cout<<v.vehicle_type<<"        ";
+        cout<<v.vehicle_company<<"        ";
+        cout<<v.year<<"\n";
 
-    for (auto &v : sortedVehicles) {
-        cout << left << setw(12) << v.regNo
-             << setw(15) << v.ownerName
-             << setw(10) << v.type
-             << setw(12) << v.company
-             << setw(6) << v.modelYear << endl;
     }
-    cout << "---------------------------------------------------------\n";
+    
+
 }
+void vehicleStatistics()
+{
+    
+    cout<<"---------------- Vehicle Statistics ----------------\n";
+    cout<<"Total Vehicles: "<< vehicles.size()<<"\n";
 
-//--------------------------------------
-// 7. Statistics
-//--------------------------------------
-void showStatistics() {
-    cout << "---------------- Vehicle Statistics ----------------\n";
-    cout << "Total Vehicles: " << vehicles.size() << endl;
+    cout<<"Count by Company: \n";
+    for(auto &p : companyCount)
+    {
+        cout << p.first << " -> " << p.second << "\n";
+    } 
 
-    // company count
-    cout << "Count by Company:\n";
-    for (auto &p : companyCount) {
-        cout << p.first << " -> " << p.second << endl;
+    cout<<"Vehicle Types Available: "<<" "<<"\n";
+    for(auto &t : vehicleTypes)
+    {
+        cout<<t<<" ";
+    }
+    cout<<"\n";
+
+    if(!vehicles.empty())
+    {
+        auto oldestModelyr = min_element(vehicles.begin(),vehicles.end(),
+        [](auto &a, auto &b){
+        return a.year<b.year;
+        });
+        auto newestModelyr = max_element(vehicles.begin(),vehicles.end(),
+        [](auto &a, auto &b){
+        return a.year<b.year;
+        });
+        cout<<"Oldest Model Year : "<< oldestModelyr->year <<"\n";
+        cout<<"Newest Model Year : "<< newestModelyr->year <<"\n";
     }
 
-    // vehicle types
-    cout << "Vehicle Types Available: ";
-    for (auto &t : vehicleTypes) cout << t << " ";
-    cout << endl;
-
-    if (!vehicles.empty()) {
-        auto oldest = min_element(vehicles.begin(), vehicles.end(),
-                                  [](auto &a, auto &b) { return a.modelYear < b.modelYear; });
-
-        auto newest = max_element(vehicles.begin(), vehicles.end(),
-                                  [](auto &a, auto &b) { return a.modelYear < b.modelYear; });
-
-        cout << "Oldest Model Year : " << oldest->modelYear << endl;
-        cout << "Newest Model Year : " << newest->modelYear << endl;
-    }
-
-    cout << "Enter a year to check count after that year: ";
     int yr;
-    cin >> yr;
+    cout<<"Enter a year to check count after that year:";
+    cin>>yr;
 
-    int count = count_if(vehicles.begin(), vehicles.end(),
-                         [&](const Vehicle &v) { return v.modelYear > yr; });
+    int count = count_if(vehicles.begin(),vehicles.end(),
+    [&](const Vehicle &v ){
+        return v.year>yr;
+    });
+    cout<<"Vehicles after "<<yr<<": "<<count<<"\n";
 
-    cout << "Vehicles after " << yr << ": " << count << endl;
 }
 
-// MAIN MENU
-int main() {
+int main()
+{
     int choice;
+    cout<<"\n-----Vehicle Registration Sytem--------\n";
+    cout<<"1.Enter Registration Number:\n";
+    cout<<"2.Enter Registration Number to search:\n";
+    cout<<"3.Enter Owner Name to search:\n";
+    cout<<"4.Enter Registration Number to update:\n";
+    cout<<"5.Enter Registration Number to delete:\n";
+    cout<<"6.List all the Vehicles\n";
+    cout<<"7.Statistics\n";
+    cout<<"8.Exit\n";
+    cout<<"Enter the choice:\n";
 
-    while (true) {
-        cout << "\n-----------------------------------------\n";
-        cout << "     VEHICLE REGISTRATION SYSTEM\n";
-        cout << "-----------------------------------------\n";
-        cout << "1. Register Vehicle\n";
-        cout << "2. Search by Registration Number\n";
-        cout << "3. Search by Owner Name\n";
-        cout << "4. Update Owner\n";
-        cout << "5. Delete Vehicle\n";
-        cout << "6. List All Vehicles\n";
-        cout << "7. Statistics\n";
-        cout << "8. Exit\n";
-        cout << "-----------------------------------------\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-            case 1: registerVehicle(); break;
-            case 2: searchByRegNo(); break;
-            case 3: searchByOwner(); break;
-            case 4: updateOwner(); break;
-            case 5: deleteVehicle(); break;
-            case 6: listAllVehicles(); break;
-            case 7: showStatistics(); break;
-            case 8: cout << "Exiting the system... Thank you!\n"; return 0;
-            default: cout << "Invalid choice! Try again.\n"; break;
-        }
+    cin>>choice;
+    switch (choice)
+    {
+        case 1:vehicleRegistration();
+        break;
+        case 2:searchByRegNo();
+        break;
+        case 3:searchByOwner();
+        break;
+        case 4:updateOwner();
+        break;
+        case 5:deleteVehicle();
+        break;
+        case 6:showVehicles();
+        break;
+        case 7:vehicleStatistics();
+        break;
+        case 8:cout<<"Exiting the system... Thank you!";
+        return 0;
+    
+    default:cout<<"Enter the valid number";
+        break;
     }
+
+    return 0;
 }
